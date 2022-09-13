@@ -1,17 +1,34 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import { SWRConfig } from "swr";
+import toast, { Toaster } from "react-hot-toast";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const notify = () =>
+  toast.error("City not found", {
+    position: "bottom-center",
+    icon: "❌",
+    duration: 4000,
+    gutter: 24,
+  });
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+  <SWRConfig
+    value={{
+      onError: (error) => {
+        if (error) notify();
+      },
+      onSuccess: (data) => {
+        if (data) toast.dismiss();
+      },
+      shouldRetryOnError: false,
+    }}
+  >
+    <React.StrictMode>
+      <App />
+      <Toaster />
+    </React.StrictMode>
+  </SWRConfig>
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
